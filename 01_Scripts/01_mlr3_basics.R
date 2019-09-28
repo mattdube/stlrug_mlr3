@@ -7,6 +7,19 @@ library(pryr)
 library(mlr3tuning)
 library(mlr3learners)
 
+vdt <- function(obj) {
+  print(as.data.table(obj))
+}
+
+vw <- function(obj, key) {
+  print(as.data.table(obj)[,.(key)])
+}
+
+vw(mlr_learners)
+
+as.data.table(mlr_learners)[,.(key, packages)]
+
+print(as.data.table(mlr_learners))
 
 hrDT <- fread(here::here("00_Data/HR_comma_sep.csv"))
 telcoDT <- fread(here::here("00_Data/WA_Fn-UseC_-HR-Employee-Attrition.csv"))
