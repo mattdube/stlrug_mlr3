@@ -1,0 +1,64 @@
+---
+title: "mlr3 Tuning & Pipelines"
+date: "9/29/2019"
+output: 
+    html_document:
+      toc: true
+      toc_float: true
+      toc_depth: 3
+      theme: flatly
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+```{r setup_part_one, echo = FALSE}
+# recreate tasks and learners from part 1
+library(ggplot2)
+library(ggthemes)
+library(data.table)
+
+library(mlr3)
+library(mlr3learners)
+library(mlr3tuning)
+library(mlr3pipelines)
+library(mlr3viz)
+
+attrDT <- as.data.table(rsample::attrition)
+tsk_attr <- TaskClassif$new(id="attrition", backend = attrDT, 
+                            target = "Attrition", positive = "Yes")
+
+lrn_dummy  <- lrn("classif.featureless")
+lrn_rpart  <- lrn("classif.rpart", predict_type = "prob")
+lrn_ranger <- lrn("classif.ranger", num.trees=15L, predict_type = "prob")
+lrn_log    <- lrn("classif.log_reg", predict_type = "prob")
+
+msr_acc <- msr("classif.acc")
+msr_auc <- msr("classif.auc")
+```
+
+# Model Optimization
+
+## Hyperparameter Tuning
+
+To maximize model performance a data-driven optimization of hyperparameters (= tuning) should be conducted. In order to tune a machine learning algorithm, we need to specify:
+
+- the search space
+- the optimization algorithm (aka tuning method)
+- an evaluation method, i.e., a resampling strategy and a performance measure
+
+Hyperparameter tuning requires the extension package <strong>`mlr3tuning`</strong>
+
+The main components of `mlr3tuning` are the R6 classes:
+
+- `TuningInstance`: describes the tuning problem and stores results.
+- `Tuner`: base class for implementing tuning algorithms.
+
+### TuningInstance
+We can look at the available parameter for a learner with `$param_set`
+
+```{r ranger_param_set}
+as.data.table(lrn_ranger$param_set)[,.(id, class, lower, upper, default)]
+```
+
