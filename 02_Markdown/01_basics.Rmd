@@ -1,0 +1,70 @@
+---
+title: "mlr3 Basics"
+author: "Matt Dube"
+date: "9/29/2019"
+output: 
+    html_document:
+      toc: true
+      theme: flatly
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+## Setup
+
+Load basic libraries and data. 
+
+We'll be using the Employee Attrition dataset from the rsample package.
+
+```{r setup_part_one}
+library(ggplot2)
+library(ggthemes)
+library(data.table)
+
+library(mlr3)
+library(mlr3viz)
+
+attrDT <- as.data.table(rsample::attrition)
+```
+
+## Setup Part 2
+### review data
+
+```{r setup_part_two}
+attrDT[,1:5]
+
+table(attrDT$Attrition)
+
+```
+
+
+The list of built-in learners (algorithms) is stored in the R6 dictionary mlr_learers.
+
+```{r}
+as.data.table(mlr_learners)
+```
+
+<br>
+You can load additional learners using the <font face=bold color="red">mlr3learners</font> package.
+
+```{r more_learners}
+library(mlr3learners)
+
+as.data.table(mlr_learners)[,.(key,predict_types,packages)]
+
+```
+
+<br>
+This is a classification problem. We're going to next create a task and define a couple of learners.
+<br>
+
+```{r create_task}
+
+tsk_attr <- TaskClassif$new(id="attrition", backend = attrDT, target = "Attrition")
+
+tsk_attr
+    
+```
+

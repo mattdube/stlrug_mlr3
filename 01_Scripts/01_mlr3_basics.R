@@ -105,3 +105,14 @@ lrn_log <- lrn("classif.log_reg")
 lrn_log$train(hr_tsk, train.idx)
 log_predict <- lrn_log$predict(hr_tsk, test.idx)
 log_predict$score(list(meas_ce, meas_acc))
+
+
+
+attrDT <- as.data.table(rsample::attrition)
+
+attrDT[,1:6]
+attrDT[,7:12]
+attrDT[,13:18]
+attrDT[,19:24]
+attrDT[,25:29]
+attrDT[,30:31]
