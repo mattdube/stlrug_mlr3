@@ -1,7 +1,7 @@
 ---
 title: "mlr3 Basics"
 #author: "Matt Dube"
-date: "9/29/2019"
+date: "9/29/2019 (updated: `r Sys.Date()`)"
 output: 
     html_document:
       toc: true
@@ -28,7 +28,10 @@ library(data.table)
 library(mlr3)
 library(mlr3viz)
 
-attrDT <- as.data.table(rsample::attrition)
+attrDT <- fread(here::here("00_Data/", "attrition_train.csv"))
+attrDT[,Attrition:=as.factor(Attrition)]
+
+#attrDT <- as.data.table(rsample::attrition)
 ```
 
 ### review data

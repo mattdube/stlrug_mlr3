@@ -1,6 +1,6 @@
 ---
 title: "mlr3 Resampling & Benchmark"
-date: "9/29/2019"
+date: "9/29/2019 (updated: `r Sys.Date()`)"
 output: 
     html_document:
       toc: true
@@ -12,6 +12,9 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 ```
+<style>
+div.litegreen { background-color:#CEF6EC; border-radius: 5px; padding: 20px;}
+</style>
 
 ```{r setup_part_one, echo = FALSE}
 # recreate tasks and learners from part 1
