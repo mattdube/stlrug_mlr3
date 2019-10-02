@@ -151,3 +151,37 @@ mlr3misc::unnest(attr_bm$aggregate(params = TRUE), "params")[,.(learner_id,
 rr_xgb_at <- attr_bm$aggregate()[learner_id == "encode.scale.importance.classif.xgboost.tuned",
                                   resample_result][[1]]
 rr_xgb_at
+msr_acc = msr("classif.acc")
+
+stackgraph = po("scale") %>>%
+    list(po("learner_cv", lrn("classif.rpart")),
+    po("learner_cv", lrn("classif.ranger"))) %>>%
+    po("featureunion", id = "fu2") %>>% po("encode") %>>%
+    lrn("classif.xgboost")
+
+
+
+single_path_xgb = po("subsample") %>>% po("encode") %>>% lrn("classif.xgboost")
+graph_bag_xgb = greplicate(single_path_xgb, n = 3) %>>%
+    po("classifavg")
+
+graph_bag_xgb$train(tsk_attr)
+graph_bag_xgb
+lrn_graph_bag_xgb = GraphLearner$new(graph_bag_xgb)
+lrn_graph_bag_xgb$train(tsk_attr)
+lrn_graph_bag_xgb
+graph_bag_xgb_pred = lrn_graph_bag_xgb$predict_newdata(tsk_attr, new_attr)
+graph_bag_xgb_pred$score(msr_acc)
+
+stackgraph$plot(html=TRUE)
+stackgraph
+stackgraph$train(tsk_attr)
+stackgraph
+
+lrn_stackgraph = GraphLearner$new(stackgraph)
+lrn_stackgraph$train(tsk_attr)
+
+new_attr <- fread("00_Data/attrition_newdata.csv")
+msr_ce = msr("classif.ce")
+pred_stack = lrn_stackgraph$predict_newdata(tsk_attr, new_attr)
+pred_stack$score(msr_ce)
