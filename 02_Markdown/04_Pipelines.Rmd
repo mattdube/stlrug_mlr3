@@ -150,3 +150,8 @@ graph_bag_xgb_pred = lrn_graph_bag_xgb$predict_newdata(tsk_attr, attr_newdata)
 graph_bag_xgb_pred$score(c(msr_acc, msr_auc))
 ```
 
+```{r}
+lrn_graph_bag_xgb$param_set
+
+```
+
