@@ -34,3 +34,10 @@ vignettes/*.pdf
 
 # Shiny token, see https://shiny.rstudio.com/articles/shinyapps.html
 rsconnect/
+
+# Rmd output HTML files
+02_Markdown/*.html
+
+# xarigan extra files
+02_Markdown/libs
+*.*
