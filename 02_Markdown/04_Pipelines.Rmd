@@ -40,30 +40,113 @@ msr_acc <- msr("classif.acc")
 msr_auc <- msr("classif.auc")
 ```
 
-# Pipelines Overview
+# mlr3 Pipelines 
 
-## PipeOp
-The most basic unit of functionality within `mlrpipelines` is the <stron>PipeOp</strong>.
-
-The PipeOp represents a transformativeo operation on input leading to output.
-
-PipeOps behave similar to functions, except  their behavior is determined by their `$state`
-
-The mlr3 pipeline order and methodology has been carefully constructed to overcome shortcomings in common practices. 
-
-The preprocessing methods (`pca`, `encode`, `impute`, `scale`, etc.) could be just be applied to training data and validation data separately, or they could be applied before resampling. 
-
-This is not recommended because:
-
-- preprocessing of each instance of prediction data (validation) should not depend on the remaining validation data.
-
-- if preprocessing is performed before resampling is done, information about the test set can leak into the training set. Resampling should evaluate the <strong>generalization</strong> performance of the entire machine learning method.
-
+## pipelines review
+Quick review of some available PipeOps:
 
 ```{r}
 library(mlr3pipelines)
+library(mlr3filters)
+library(mlr3viz)
+library(ggplot2)
 
-as.data.table(mlr_pipeops)[, .(key, input.num, output.num)][1:15]
+as.data.table(mlr_pipeops)[, .(key, input.num, output.num)][16:30]
 
+```
+
+## create a graph pipeline
+Here's a simple pipeline that encodes categorical features, centers & scales numeric features, filters features by importance and only uses the top 15, and applies all those steps to an xgboost learner.
+
+```{r xgb_pipeline}
+
+lrn_xgboost <- lrn("classif.xgboost")
+
+gr_xgb <- po("encode") %>>% po("scale") %>>%
+    po("filter", flt("importance", learner=lrn_xgboost), filter.nfeat = 15) %>>%
+    mlr_pipeops$get("learner", learner = lrn_xgboost)
+
+gr_xgb
+
+gr_xgb$plot(html=TRUE)
+```
+
+Notice the `State` is `<<UNTRAINED>>` for all steps.
+
+Pipeops Graphs have `train()` and `predict()` methods like regular learners.
+
+```{r xgb_pipe_train}
+gr_xgb$train(tsk_attr)
+
+gr_xgb
+```
+Now we can wrap the graph object in GraphLearner:
+
+```{r xgb_graph_learner}
+lrn_gr_xgb <- GraphLearner$new(gr_xgb)
+
+lrn_gr_xgb
+```
+
+Notice the ouput from `lrn_gr_xgb` is the same as the output for any basic untrained learner created earlier. 
+
+## Train
+At this point we can train our graph learner and make predictions.
+
+```{r validate_data, include=FALSE}
+attr_newdata <- fread("../00_Data/attrition_newdata.csv")
+```
+
+```{r xgb_gr_train}
+lrn_gr_xgb$train(tsk_attr)
+
+lrn_gr_xgb
+```
+
+## Predict on new data:
+```{r xgb_gr_predict}
+pred_xgbgr <- lrn_gr_xgb$predict_newdata(tsk_attr, attr_newdata)
+
+pred_xgbgr 
+
+pred_xgbgr$score(c(msr_acc, msr_auc))
+  
+```
+
+## Stacking
+```{r stacking}
+stackgraph = list(po("learner_cv", lrn("classif.rpart")),
+    po("learner_cv", lrn("classif.ranger"))) %>>%
+    po("featureunion", id = "fu2") %>>% po("encode") %>>% po("scale") %>>%
+    lrn("classif.xgboost")
+
+stackgraph
+
+stackgraph$plot(html=TRUE)
+```
+
+
+## Bagging
+
+### Create graph pipeline
+```{r bagging}
+single_path_xgb = po("subsample") %>>% po("encode") %>>% po("scale") %>>% lrn("classif.xgboost")
+graph_bag_xgb = greplicate(single_path_xgb, n = 5) %>>%
+    po("classifavg")
+
+graph_bag_xgb
+
+graph_bag_xgb$plot(html=TRUE)
+```
+
+### train model and predict 
+```{r bagging_train_predict}
+graph_bag_xgb$train(tsk_attr)
+graph_bag_xgb
+lrn_graph_bag_xgb = GraphLearner$new(graph_bag_xgb)
+lrn_graph_bag_xgb$train(tsk_attr)
+lrn_graph_bag_xgb
+graph_bag_xgb_pred = lrn_graph_bag_xgb$predict_newdata(tsk_attr, attr_newdata)
+graph_bag_xgb_pred$score(c(msr_acc, msr_auc))
 ```
 

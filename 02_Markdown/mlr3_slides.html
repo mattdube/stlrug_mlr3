@@ -14,7 +14,7 @@ class: center, middle, inverse, title-slide
 # Maching Learning in R with mlr3
 ## with mlr3
 ### Matt Dube
-### 2019/09/26 (updated: 2019-10-01)
+### 2019/09/26 (updated: 2019-10-02)
 
 ---
 
@@ -129,7 +129,7 @@ Additionally you need to implement infrastructure to:
 - embrace data.table, both for arguments and internal data structures
 
 - light on dependencies 
- - ~ 10 packages – 4 of which are developed by mlr team
+ - ~ 10 packages â 4 of which are developed by mlr team
  - R6, data.table, Metrics, lgr, digest, uuid, mlbench 
 
 - utilizes future and future.apply for parallelization
@@ -144,7 +144,7 @@ Additionally you need to implement infrastructure to:
 The mlr3 package provides R6 classes for the essential building blocks of the machine learning workflow:
 - A &lt;strong&gt;task&lt;/strong&gt; encapsulates the data along with additional information, such as what the prediction target is.
 
-- A &lt;strong&gt;learner&lt;/strong&gt; encapsulates one of R’s many machine learning algorithms and allows to train models and make predictions. Most learners have hyperparameters that affect their operation.
+- A &lt;strong&gt;learner&lt;/strong&gt; encapsulates one of Râs many machine learning algorithms and allows to train models and make predictions. Most learners have hyperparameters that affect their operation.
 
 - A &lt;strong&gt;measure&lt;/strong&gt; computes a numeric score based on predicted and ground-truth values and their difference.
 
@@ -301,23 +301,24 @@ as.data.table(mlr_measures)[task_type == "classif"][,.(key)]
 ##  2:         classif.auc
 ##  3:          classif.ce
 ##  4:       classif.costs
-##  5:          classif.f1
-##  6:         classif.fdr
-##  7:          classif.fn
-##  8:         classif.fnr
-##  9:         classif.for
-## 10:          classif.fp
-## 11:         classif.fpr
-## 12:         classif.npv
-## 13:         classif.ppv
-## 14:   classif.precision
-## 15:      classif.recall
-## 16: classif.sensitivity
-## 17: classif.specificity
-## 18:          classif.tn
-## 19:         classif.tnr
-## 20:          classif.tp
-## 21:         classif.tpr
+##  5:         classif.dor
+##  6:     classif.f_score
+##  7:         classif.fdr
+##  8:          classif.fn
+##  9:         classif.fnr
+## 10:         classif.for
+## 11:          classif.fp
+## 12:         classif.fpr
+## 13:         classif.npv
+## 14:         classif.ppv
+## 15:   classif.precision
+## 16:      classif.recall
+## 17: classif.sensitivity
+## 18: classif.specificity
+## 19:          classif.tn
+## 20:         classif.tnr
+## 21:          classif.tp
+## 22:         classif.tpr
 ##                     key
 ```
 ]
