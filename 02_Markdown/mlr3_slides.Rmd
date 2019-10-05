@@ -22,7 +22,7 @@ library(data.table)
 library(mlr3)
 library(DT)
 ```
-# Intro and a few notes
+# Intro 
 Topic Overview
 - what we won't be covering
   - this is not a machine learning how-to
@@ -38,6 +38,8 @@ Topic Overview
  - the demos make no attempt to create good models - only to show the tools and workflow of mlr3
     - no feature engineering done, no features removed
     - some things are done to show an example of a step, not because they're logical:)
+---
+# Notes
 
 <b>Keep in mind:</b>
 - mlr3 (and extension packages) are under active development
@@ -52,6 +54,8 @@ Topic Overview
 - there is some different terminology and syntax
  - don't get hung up on the differences and quirks
  - some of this may offend your normal R sensibilities
+ 
+ 
 
 
 
