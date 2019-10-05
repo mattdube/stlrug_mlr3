@@ -35,6 +35,9 @@ Topic Overview
 
 - the dataset we'll be using for the demos is the attrition dataset from the rsample package.
  - I've set aside 15% of the dataset to be used as "new data"
+ - the demos make no attempt to create good models - only to show the tools and workflow of mlr3
+    - no feature engineering done, no features removed
+    - some things are done to show an example of a step, not because they're logical:)
 
 <b>Keep in mind:</b>
 - mlr3 (and extension packages) are under active development
