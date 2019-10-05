@@ -41,15 +41,16 @@ Topic Overview
 
 - examples today may not  work next week
 
-- if something breaks, the [documention](https://mlr3.mlr-org.com/index.html) is very good, and updated often
+- if something breaks, the [documentation](https://mlr3.mlr-org.com/index.html) is very good, and updated often
 
 - this is a <strong>BIG</strong> topic, we won't cover it all
  - read the docs, and check the references at the end of this deck
  
 - there is some different terminology and syntax
  - don't get hung up on the differences and quirks
+ - some of this may offend your normal R sensibilities
 
-- some of this may offend your normal R sensibilities
+
 
 ---
 
@@ -130,7 +131,7 @@ Additionally you need to implement infrastructure to:
 - embrace data.table, both for arguments and internal data structures
 
 - light on dependencies 
- - ~ 10 packages – 4 of which are developed by mlr team
+ - ~ 10 packages, 4 of which are developed by mlr team
  - R6, data.table, Metrics, lgr, digest, uuid, mlbench 
 
 - utilizes future and future.apply for parallelization
@@ -145,7 +146,7 @@ Additionally you need to implement infrastructure to:
 The mlr3 package provides R6 classes for the essential building blocks of the machine learning workflow:
 - A <strong>task</strong> encapsulates the data along with additional information, such as what the prediction target is.
 
-- A <strong>learner</strong> encapsulates one of R’s many machine learning algorithms and allows to train models and make predictions. Most learners have hyperparameters that affect their operation.
+- A <strong>learner</strong> encapsulates one of R's many machine learning algorithms and allows to train models and make predictions. Most learners have hyperparameters that affect their operation.
 
 - A <strong>measure</strong> computes a numeric score based on predicted and ground-truth values and their difference.
 
@@ -371,6 +372,22 @@ lrn("classif.xgboost")
 
 
 ---
+# graphs
+- `mlr3pipelines` is a dataflow programming toolkit utilising the mlr3 package. 
+
+- Machine learning workflows can be written as directed Graphs 
+  - Graphs represent data flows between preprocessing, model fitting, and ensemble learning units 
+  
+  - In computer programming, dataflow programming is a programming paradigm that models a program as a directed graph of the data flowing between operations.
+.pull-left[![mlr3 graph pipeline.](media/pipeline.png) ]
+  
+
+.footnote[
+[1] See [Dataflow Wikipedia Page](https://en.wikipedia.org/wiki/Dataflow_programming) for more info on Dataflow programming.
+
+[2] See [DAGs Wikipedia Page](https://en.wikipedia.org/wiki/Directed_acyclic_graph) for more info on Directed Acryllic Graphs.
+]
+---
 
 # pipelines
 
@@ -383,29 +400,34 @@ as.data.table(mlr_pipeops)[, .(key, input.num, output.num)][1:21]
 
 ```
 
-
 --- 
-# split data
-
-In mlr3, we do not create train and test data sets, but instead keep only a vector of train and test indices.
-
-`set.seed(4411)`
-
-`train.idx <- sample(seq_len(task$nrow), 0.7 * task$nrow)`
-
-`test.idx <- setdiff(seq_len(task$nrow), train.idx)`
 
 ---
+class: middle, center
 
-class: inverse, middle, center
+# Resources
 
-# Deck not Complete 
+<strong>Documentation</strong>
 
-Need links to:
-    - demo markdown html files
-    - additional online resources
+https://github.com/mlr-org/mlr3
 
----
+https://mlr3.mlr-org.com/reference/
+
+https://github.com/mlr-org/mlr3pipelines
+
+https://mlr3book.mlr-org.com
+
+https://github.com/mlr-org/mlr-outreach/tree/master/2019_useR
+
+<strong>Videos</strong>
+
+https://www.youtube.com/watch?v=gEW5RxkbQuQ&list=PL4IzsxWztPdliwImi5JLBC4BrvqxG-vcA&index=39&t=0s
+
+https://www.youtube.com/watch?v=wsP2hiFnDQs&feature=youtu.be
+
+
+
+
 
 
 

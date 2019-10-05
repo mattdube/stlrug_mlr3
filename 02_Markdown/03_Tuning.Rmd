@@ -38,6 +38,10 @@ msr_acc <- msr("classif.acc")
 msr_auc <- msr("classif.auc")
 ```
 
+```{r validate_data, include=FALSE}
+attr_newdata <- fread("../00_Data/attrition_newdata.csv")
+```
+
 # Model Optimization
 
 ## Hyperparameter Tuning
@@ -46,7 +50,8 @@ To maximize model performance a data-driven optimization of hyperparameters (= t
 
 - the search space
 - the optimization algorithm (aka tuning method)
-- an evaluation method, i.e., a resampling strategy and a performance measure
+- an evaluation method, i.e., a resampling strategy 
+- a performance measure
 
 Hyperparameter tuning requires the extension package <strong>`mlr3tuning`</strong>
 
@@ -129,8 +134,9 @@ tuner_rng <- tnr("grid_search", resolution = 10)
 
 Start tuning... (output suppressed)
 
-```{r tuning}
-set.seed(5612)
+```{r tuning, include=FALSE}
+future::plan("multiprocess")
+set.seed(0820)
 rng_tune_res <- tuner_rng$tune(rng_tn_instance)
 
 ```
@@ -161,5 +167,60 @@ And after training...
 lrn_ranger$train(tsk_attr)
 
 lrn_ranger
+```
+
+### Make Predictions
+```{r}
+pred_ranger = lrn_ranger$predict_newdata(tsk_attr, attr_newdata)
+
+pred_ranger$score(c(msr_acc, msr_auc))
+
+```
+
+## Autotuner
+
+
+`future::plan("multiprocess")`
+
+```{r}
+future::plan("multiprocess")
+tuner = tnr("random_search")
+meas_auc <- msr("classif.auc")
+
+
+at_ranger = AutoTuner$new(
+    learner = lrn("classif.ranger", predict_type = "prob"),
+    resampling = cv3,
+    measures = meas_auc,
+    tune_ps = tn_rng_ps,
+    terminator = evals20,
+    tuner = tuner
+)
+
+```
+
+
+```{r}
+at_ranger
+
+```
+
+
+
+```{r include=FALSE}
+set.seed(3334)
+at_ranger$train(tsk_attr)
+
+
+```
+
+```{r}
+
+at_ranger
+
+at_pred = at_ranger$predict_newdata(tsk_attr, attr_newdata)
+
+at_pred$score(c(msr_acc, msr_auc))
+
 ```
 

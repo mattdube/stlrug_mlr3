@@ -116,13 +116,23 @@ pred_xgbgr$score(c(msr_acc, msr_auc))
 ## Stacking
 ```{r stacking}
 stackgraph = list(po("learner_cv", lrn("classif.rpart")),
-    po("learner_cv", lrn("classif.ranger"))) %>>%
+    po("learner_cv", lrn("classif.ranger")),
+    po("nop")) %>>%
     po("featureunion", id = "fu2") %>>% po("encode") %>>% po("scale") %>>%
     lrn("classif.xgboost")
 
 stackgraph
 
 stackgraph$plot(html=TRUE)
+
+stack_lrn = GraphLearner$new(stackgraph)
+
+stack_lrn$train(tsk_attr)
+```
+
+```{r}
+pred_stack = stack_lrn$predict_newdata(tsk_attr, attr_newdata)
+pred_stack$score(c(msr_auc, msr_acc))
 ```
 
 
@@ -130,28 +140,27 @@ stackgraph$plot(html=TRUE)
 
 ### Create graph pipeline
 ```{r bagging}
-single_path_xgb = po("subsample") %>>% po("encode") %>>% po("scale") %>>% lrn("classif.xgboost")
-graph_bag_xgb = greplicate(single_path_xgb, n = 5) %>>%
+single_path_rng = po("subsample") %>>% po("scale") %>>% lrn("classif.ranger", predict_type = "prob")
+graph_bag_rng = greplicate(single_path_rng, n = 5) %>>%
     po("classifavg")
 
-graph_bag_xgb
+graph_bag_rng
 
-graph_bag_xgb$plot(html=TRUE)
+graph_bag_rng$plot(html=TRUE)
 ```
 
 ### train model and predict 
 ```{r bagging_train_predict}
-graph_bag_xgb$train(tsk_attr)
-graph_bag_xgb
-lrn_graph_bag_xgb = GraphLearner$new(graph_bag_xgb)
-lrn_graph_bag_xgb$train(tsk_attr)
-lrn_graph_bag_xgb
-graph_bag_xgb_pred = lrn_graph_bag_xgb$predict_newdata(tsk_attr, attr_newdata)
-graph_bag_xgb_pred$score(c(msr_acc, msr_auc))
+graph_bag_rng$train(tsk_attr)
+graph_bag_rng
+lrn_graph_bag_rng = GraphLearner$new(graph_bag_rng)
+lrn_graph_bag_rng$train(tsk_attr)
+lrn_graph_bag_rng
+graph_bag_rng_pred = lrn_graph_bag_rng$predict_newdata(tsk_attr, attr_newdata)
+graph_bag_rng_pred$score(c(msr_acc, msr_auc))
 ```
 
 ```{r}
-lrn_graph_bag_xgb$param_set
+lrn_graph_bag_rng
 
 ```
-

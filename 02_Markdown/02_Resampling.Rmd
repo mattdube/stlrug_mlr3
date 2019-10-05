@@ -148,10 +148,15 @@ design
 
 ### Execute Benchmarks
 
-```{r benchmark_execute}
+```{r benchmark_execute, include=FALSE}
 attr_bm <- benchmark(design, store_models = TRUE)
-attr_bm
 ```
+
+```{r}
+attr_bm
+
+```
+
 
 ### Benchmark Evaluate
 
