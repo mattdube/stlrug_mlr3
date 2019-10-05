@@ -6,7 +6,9 @@ materials for Saint Louis R User Group 10/2/2019  presentation on mlr3
 ## mlr3_slides.Rmd --> requires 'xaringan' package to knit
   - intro, mlr3 overview
   - html output is included if you don't want to knit yourself
-  
+  - the `00_Extras` folder contains `mlr3.css` - put this file in:
+    - `R Library Path` `/xaringan/rmarkdown/templates/xaringan/resources`
+    
 ## 01_basics.Rmd
   - intro to basic tasks, learners
   
